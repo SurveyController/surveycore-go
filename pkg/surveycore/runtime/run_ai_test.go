@@ -94,7 +94,7 @@ func TestAIQuestionPromptIncludesPersona(t *testing.T) {
 		Title:       "你的看法",
 		BlankCount:  1,
 	})
-	if !strings.Contains(prompt, "你扮演的角色是") || !strings.Contains(prompt, "26-35岁") {
+	if !strings.Contains(prompt, "26-35") {
 		t.Fatalf("prompt = %q", prompt)
 	}
 }

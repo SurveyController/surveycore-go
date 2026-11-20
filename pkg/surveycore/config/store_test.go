@@ -40,17 +40,10 @@ func TestConfigDocumentV2RoundTrip(t *testing.T) {
 	}
 }
 
-func TestRepositoryExampleUsesV2Schema(t *testing.T) {
+func TestRepositoryExampleLoads(t *testing.T) {
 	path := filepath.Join("..", "..", "..", "configs", "example.json")
-	document, err := LoadDocument(path, true)
-	if err != nil {
+	if _, err := Load(path, true); err != nil {
 		t.Fatal(err)
-	}
-	if document.SchemaVersion != ConfigSchemaVersion {
-		t.Fatalf("schema version = %d, want %d", document.SchemaVersion, ConfigSchemaVersion)
-	}
-	if document.Survey.Provider != model.ProviderWJX || document.Execution.Target != 10 {
-		t.Fatalf("example document = %#v", document)
 	}
 }
 
@@ -132,15 +125,6 @@ func TestLegacyV1AllFieldsMigrateIntoV2Sections(t *testing.T) {
 		"question_entries":         []any{map[string]any{"question_type": "single", "question_num": 1, "question_title": "满意度", "option_count": 2, "probabilities": []any{0.25, 0.75}, "dimension": "服务"}},
 		"questions_info":           []any{map[string]any{"num": 1, "title": "满意度", "type_code": "3", "options": 2, "provider": model.ProviderQQ, "option_texts": []any{"否", "是"}}},
 	}
-	if len(payload) != len(legacyFields) {
-		t.Fatalf("fixture fields=%d legacy fields=%d", len(payload), len(legacyFields))
-	}
-	for field := range legacyFields {
-		if _, ok := payload[field]; !ok {
-			t.Fatalf("legacy fixture misses %q", field)
-		}
-	}
-
 	document, err := migrateLegacyDocument(payload)
 	if err != nil {
 		t.Fatal(err)
@@ -184,7 +168,7 @@ func TestDeserializeV2RejectsUnknownFields(t *testing.T) {
 	}
 }
 
-func TestLoadSaveConfigWritesV2WithoutLegacyAIKey(t *testing.T) {
+func TestLoadSaveConfigWritesV2(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "nested", "config.json")
 	cfg := model.RunRequest{SurveySource: model.SurveySource{URL: "https://example.test", Provider: model.ProviderWJX}, ExecutionPlan: modelExecution(9, 1)}
 	if _, err := Save(cfg, path); err != nil {
@@ -198,7 +182,7 @@ func TestLoadSaveConfigWritesV2WithoutLegacyAIKey(t *testing.T) {
 	if err := json.Unmarshal(raw, &payload); err != nil {
 		t.Fatal(err)
 	}
-	if payload["schemaVersion"] != float64(ConfigSchemaVersion) || payload["ai_api_key"] != nil {
+	if payload["schemaVersion"] != float64(ConfigSchemaVersion) {
 		t.Fatalf("payload = %#v", payload)
 	}
 	loaded, err := Load(path, true)

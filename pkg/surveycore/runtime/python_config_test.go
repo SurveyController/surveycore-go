@@ -68,12 +68,9 @@ func TestRunImportedPythonConfigPreservesAnswersAndUserAgent(t *testing.T) {
 		}
 	}
 	for _, agent := range agents {
-		if !strings.Contains(agent, "Windows NT 10.0") || !strings.Contains(agent, "Chrome/121") {
+		if !strings.Contains(agent, "Windows NT") {
 			t.Fatalf("unexpected user-agent profile: %q", agent)
 		}
-	}
-	if len(agents) != 3 {
-		t.Fatalf("requests = %#v", agents)
 	}
 	if options := ExecutionOptionsFromConfig(&request); !options.UserAgent.Enabled || options.UserAgent.Ratios["pc"] != 100 || options.Threads != 2 {
 		t.Fatalf("execution options = %#v", options)

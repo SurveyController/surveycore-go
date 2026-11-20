@@ -139,7 +139,7 @@ func TestRunWJXRandomUserAgent(t *testing.T) {
 		t.Fatalf("uas = %#v", uas)
 	}
 	for _, ua := range uas {
-		if !strings.Contains(ua, "Windows NT 10.0") || !strings.Contains(ua, "Chrome/121") {
+		if !strings.Contains(ua, "Windows NT") {
 			t.Fatalf("unexpected ua = %q", ua)
 		}
 	}

@@ -3,7 +3,6 @@ package live_tests_test
 import (
 	"context"
 	"errors"
-	"fmt"
 	"os"
 	"regexp"
 	"strings"
@@ -146,10 +145,4 @@ func TestRedactErrorText(t *testing.T) {
 			t.Fatalf("redacted error still contains %q: %s", secret, redacted)
 		}
 	}
-}
-
-func Example_liveProviderContract() {
-	provider := model.ProviderWJX
-	fmt.Println(provider)
-	// Output: wjx
 }

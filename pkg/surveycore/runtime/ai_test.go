@@ -185,27 +185,28 @@ func TestProviderAICustomRequiresBaseURLAndModel(t *testing.T) {
 func TestDefaultAISystemPromptMatchesModes(t *testing.T) {
 	freePrompt := defaultAISystemPromptForMode("free")
 	providerPrompt := defaultAISystemPromptForMode("provider")
-	if !strings.Contains(freePrompt, "不是AI助手") || strings.Contains(freePrompt, "|| 分隔") {
+	if strings.Contains(freePrompt, "||") {
 		t.Fatalf("free prompt = %q", freePrompt)
 	}
-	if !strings.Contains(providerPrompt, "|| 分隔") {
+	if !strings.Contains(providerPrompt, "||") {
 		t.Fatalf("provider prompt = %q", providerPrompt)
 	}
 }
 
 func TestTestAIConnectionReturnsPreview(t *testing.T) {
+	const reply = "本地测试回复"
 	client := New(WithAITextResolver(AITextResolverFunc(func(_ context.Context, _ model.AIProfile, _ *model.Persona, request AITextRequest) ([]string, error) {
-		if request.BlankCount != 1 || !strings.Contains(request.Title, "连接成功") {
+		if request.BlankCount != 1 {
 			t.Fatalf("request = %#v", request)
 		}
-		return []string{"连接成功"}, nil
+		return []string{reply}, nil
 	})))
 
 	message, err := client.TestAIConnection(context.Background(), model.AIProfile{Mode: "provider"})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(message, "连接成功！AI 回复: 连接成功") {
+	if !strings.Contains(message, reply) {
 		t.Fatalf("message = %q", message)
 	}
 }

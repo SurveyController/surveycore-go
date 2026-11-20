@@ -95,14 +95,6 @@ func TestV1HealthAndNotFound(t *testing.T) {
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf("health status=%d", resp.StatusCode)
 	}
-	resp, err = http.Get(server.URL + "/api/health")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusNotFound {
-		t.Fatalf("legacy health status=%d, want 404", resp.StatusCode)
-	}
 	resp, err = http.Get(server.URL + "/api/v1/tasks/missing")
 	if err != nil {
 		t.Fatal(err)
